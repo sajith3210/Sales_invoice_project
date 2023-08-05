@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container  mt-4">
+ 
+        <table class=" table table-danger table-striped table-responsive ">
+            <thead>
+                <tr>
+                    <th>Product name</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>GST</th>
+                    <th>Total Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for ad  in add_pr  %}
+                    <tr>
+                        <td>{{ad.product_name}}</td>
+                        <td>{{ad.quantity}}</td>
+                        <td>{{ad.rate}}</td>
+                        <td>{{ad.amount}}</td>
+                        <td>{{ad.gst}}</td>
+                        <td>{{ad.total_amount}}</td>
+                        <td> 
+                        <a class="btn btn-primary" href="{% url 'edit_sale' inv.id %}"><span class="fa fa-edit"></span>Edit</a>
+                        <a class="btn btn-danger" href="{% url 'delete_sale' inv.id %}"><span class="fa fa-trash"></span> Delete</a> 
+                        </td>
+                    </tr>
+                {% endfor %}
+                    
+            </tbody>
+        </table>
+</div> 
+</body>
+</html>

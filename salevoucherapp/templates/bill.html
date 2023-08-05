@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sale Invoice</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<style>
+        @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+body{
+    background-image: linear-gradient(to right top, #480a38, #843844, #b27054, #ceb074, #def2b0);
+
+}
+    /* Apply the animation to the success message */
+    #success-message {
+        animation: fadeOut 2s ease-in-out forwards;
+    }
+    .lbl{
+        font-size: 20px;
+        font-weight: bold;
+    }
+    th{
+        color: rgb(160, 18, 255)  !important;
+    }
+    img.card-image {
+        width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  
+}
+
+</style>
+</head>
+
+    <div class="container mt-4 first_container" >
+        <div class="card bg-info text-white">
+            <form action="" method="post">
+                {% csrf_token %}
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="text-center">Sales invoice</h3>
+                    <strong><label id="available_quantity" for="" > </label></strong>
+                </div>
+            </div>
+            <div  class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img  class="card-img h-100"  src="{% static 'images/sale2.avif' %}" alt="texes.jpeg" srcset="">
+                    </div>
+                    <div class="col-md-4">
+                            
+                        <label class="lbl" for="billno">Bill number</label> <button hidden></button>
+                        <input value="{{bill_no}}" required class="form-control"  type="number" name="billno" id="billno">
+                        <input value="{{fail_bill_msg}}" hidden  type="number" name="" id="fail_bill_msg">
+                        <label class="lbl" for="pname">Procuct name</label>
+                        
+                        <!-- <a href="{#% url 'get_product_detail' %#}" id="prodLink"></a> -->
+                        
+                        <select class="form-control" name="prod_name" id="prod_name" >
+                            <optgroup  label="List Of Products"></optgroup>
+                            <option disabled selected ></option>
+                            {% for ad_p  in ad_prod  %}
+                            <option value="{{ad_p.product_name}}">{{ad_p.product_name}}</option>
+                            {% endfor %}
+                        </select>
+                        
+                            
+
+
+                        <label class="lbl" for="quantity">Quantity</label>
+                        <input value="{{prod.quantity}}" required class="form-control"   type="number" name="quantity" id="quantity">
+
+                        <label class="lbl" for="Rate">Rate</label>
+                        <input required class="form-control"   type="number" name="Rate" id="Rate">
+
+                        <label class="lbl" for="Amount">Amount</label>
+                        <input disabled required class="form-control"   type="number" name="Amount" id="Amount">
+                        <!-- hidden total amount text box  -->
+                        <input hidden  class="form-control"  type="number" name="hid_amount" id="hid_amount">
+
+                        <label class="lbl" for="GST">GST</label>
+                        <input  required class="form-control"   type="number" name="GST" id="GST">
+
+                        <label class="lbl" for="tamount">Total amount</label>
+                        <input disabled required class="form-control"   type="number" name="tamount" id="tamount">
+                        <!-- hidden total amount  -->
+                        <input hidden  class="form-control"  type="number" name="hide_tot_amt" id="hide_tot_amt">
+                        <button class="w-100 float-xl-end btn btn-lg btn-success mt-4" type="submit"><span class="fa fa-save"></span> Print invoice</button>
+                        <br> <br> <br> <br>
+                        {% if msg %}
+                            <div id="success_message" class="alert alert-success">{{ msg }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>  
+                <!-- row end  -->
+            </div>
+            
+            </form>
+        </div>
+        <!-- card end  -->
+    </div> 
+
+    <!-- first container end  -->
+
+    <div class="container  mt-4">
+ 
+                <table class=" table table-danger table-striped table-responsive ">
+                    <thead>
+                        <tr>
+                            <th>Product name</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            <th>GST</th>
+                            <th>Total Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for inv  in invoice_all  %}
+                            <tr>
+                                <td>{{inv.product_name}}</td>
+                                <td>{{inv.quantity}}</td>
+                                <td>{{inv.rate}}</td>
+                                <td>{{inv.amount}}</td>
+                                <td>{{inv.gst}}</td>
+                                <td>{{inv.total_amount}}</td>
+                                <td> 
+                                <a class="btn btn-primary" href="{% url 'edit_sale' inv.id %}"><span class="fa fa-edit"></span>Edit</a>
+                                <a class="btn btn-danger" href="{% url 'delete_sale' inv.id %}"><span class="fa fa-trash"></span> Delete</a> 
+                                </td>
+                            </tr>
+                        {% endfor %}
+                            
+                    </tbody>
+                </table>
+    </div>             
+</body>
+<script>
+    const successMessage = document.getElementById('success_message');
+// Remove the success message after 2 seconds
+setTimeout(function() {
+    successMessage.remove();
+}, 2000);
+
+
+
+
+// $(document).ready(function() {
+//     $('#prod_name').change(function(){
+//         let pro_name=$(this).val(); //get value from product name  dropdown
+//         $.ajax({
+//             url: " 'get_product'", // fetch other text box value when select product name foreign key
+//             data: {
+//                       'pro_name': pro_name
+        
+//                     },
+//             success:function(data){    
+//                 // quantity left  
+//                 let quantity_left = data.prod[0].quantity; 
+
+//                 let txtQuantity=$("#quantity").val()
+//                 // rate fetch in textbox 
+//                 let rate_fet_txt = data.prod[0].rate;
+//                 let txtRate=$("#Rate").val(rate_fet_txt)
+
+//                 let amt =txtQuantity * txtRate;
+//                 let txtAmount= $("#Amount").val(amt)
+
+//                 let txtGST=$("#GST").val(data.prod[0].gst)
+//                  $("#tamount").val(txtAmount + (txtAmount * txtGST /100))
+//                 }
+//         })
+//     })
+
+// })
+ // Get the product data when the product name is selected in the dropdown menu.
+ 
+ $('#prod_name').on('change', function() {
+    getProductData($(this).val());
+  });
+  function getProductData(productName) {
+  // Make an Ajax request to the server.
+  $.ajax({
+    url: "{% url 'get_product_data' %}",
+    data: {
+      'product_name': productName
+    },
+    dataType: 'json',
+    success: function(data) {
+      // Update the text boxes with the data for the selected product.
+      var sell_qty= $('#quantity').val();
+      var sell_rate=$('#Rate').val(data.rate);
+      var gst=$('#GST').val(data.gst)
+      var amount=$('Amount').val()
+    //   $('#tamount').val(data.total_amount);
+      $('#available_quantity').text("Available quantity "+ data.quantity);
+    }
+  });
+}
+ // Update the amount textbox when the quantity or rate textboxes are changed.
+$('#quantity, #Rate ').on('input change', function() {
+  var sell_qty = $('#quantity').val();
+  var sell_rate = $('#Rate').val();
+
+  // Calculate the total amount.
+  var sell_amount = sell_qty * sell_rate;
+
+  // Update the amount textbox with the total amount.
+  $('#Amount').val(sell_amount);
+  var amount=$('#hid_amount').val(sell_amount);
+
+    var gst =$("#GST")
+    var totalAmountValue =parseFloat(amount)  + parseFloat((amount * gst.val() / 100)) ;
+    $('#tamount').val(totalAmountValue)
+
+});  
+
+
+
+
+//  Update the amount textbox when the quantity or rate textboxes are changed.
+ $('#GST').on('input', function() {
+    var amount=$('#Amount').val()
+    var gst =$(this).val()
+    
+    var totalAmountValue =parseFloat(amount)  + parseFloat((amount * gst / 100)) ;
+    $('#tamount').val(totalAmountValue)
+    $('#hide_tot_amt').val(totalAmountValue)
+
+ })
+
+
+</script>
+</html>

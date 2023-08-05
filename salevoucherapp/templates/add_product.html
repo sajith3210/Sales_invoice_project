@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sale Invoice</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<style>
+        @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+body{
+    background-image: linear-gradient(to right top, #480a38, #843844, #b27054, #ceb074, #def2b0);
+
+}
+    /* Apply the animation to the success message */
+    #success-message {
+        animation: fadeOut 2s ease-in-out forwards;
+    }
+    .lbl{
+        font-size: 20px;
+        font-weight: bold;
+    }
+    th{
+        color: rgb(160, 18, 255)  !important;
+    }
+    img.card-image {
+        width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  
+}
+
+</style>
+</head>
+<body class="gradient_background">
+    <div class="container mt-4 first_container" >
+        <div class="card bg-info text-white">
+            <form action="" method="post">
+                {% csrf_token %}
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="text-center">Add product</h3>
+                </div>
+            </div>
+            <div  class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img  class="card-img h-100"  src="{% static 'images/sale2.avif' %}" alt="texes.jpeg" srcset="">
+                    </div>
+                    <div class="col-md-4">
+                    
+                        <label class="lbl" for="pname">Procuct name</label>
+                        <input required class="form-control"  type="text" name="pname" id="pname">
+
+                        <label class="lbl" for="quantity">Quantity</label>
+                        <input required class="form-control"  type="number" name="quantity" id="quantity">
+
+                        <label class="lbl" for="Rate">Rate</label>
+                        <input required class="form-control"  type="number" name="Rate" id="Rate">
+
+                        <label class="lbl" for="Amount">Amount</label>
+                        <input disabled required class="form-control"  type="number" name="Amount" id="Amount">
+                        <!-- hidden total amount text box  -->
+                        <input hidden  class="form-control"  type="number" name="hid_amount" id="hid_amount">
+
+                        <label class="lbl" for="GST">GST</label>
+                        <input  required class="form-control"  type="number" name="GST" id="GST">
+
+                        <label class="lbl" for="tamount">Total amount</label>
+                        <input disabled required class="form-control"  type="number" name="tamount" id="tamount">
+                        <!-- hidden total amount  -->
+                        <input hidden  class="form-control"  type="number" name="hide_tot_amt" id="hide_tot_amt">
+                        <button class="w-100 float-xl-end btn btn-lg btn-success mt-4" type="submit"><span class="fa fa-save"></span> Add prduct</button>
+                        <br> <br> <br> <br>
+                        {% if msg %}
+                        <script>
+                            window.alert('{{ msg }}');
+                        </script>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>  
+                <!-- row end  -->
+            </div>
+            
+            </form>
+        </div>
+        <!-- card end  -->
+    </div> 
+    <!-- first container end  -->
+
+   
+</body>
+<script>
+    const successMessage = document.getElementById('success_message');
+// Remove the success message after 2 seconds
+setTimeout(function() {
+    successMessage.remove();
+}, 2000);
+
+$(document).ready(function(){
+    // Get the quantity and rate textboxes.
+    var quantity = $("#quantity");
+    var rate = $("#Rate");
+    var am = $("#Amount");
+    var gst = $("#GST");
+    var total_amount = $("#tamount");
+    var hid_amount = $("#hid_amount");
+    var hide_tot_amt = $("#hide_tot_amt");
+
+    // Set up an event listener for the quantity and rate textboxes.
+    quantity.on("change", function() {
+    // Calculate the amount.
+        var amount = parseFloat(quantity.val())  * parseFloat(rate.val()) ;
+        // Update the amount textbox.
+        am.val(amount);
+        hid_amount.val(amount)
+        
+    });
+
+        // Set up an event listener for the rate and rate textboxes.
+        rate.on("change", function() {
+    // Calculate the amount.
+        var amount = parseFloat(quantity.val())  * parseFloat(rate.val());
+        // Update the amount textbox.
+        am.val(amount);
+        hid_amount.val(amount)
+    });
+
+    // Set up an event listener for the GST textbox.
+    gst.on("change", function() {
+    // Get the amount value.
+    var amountValue =parseFloat(am.val()) ;
+
+    // Get the GST value.
+    var gstValue =parseFloat(gst.val()) 
+
+    // Calculate the total amount.
+    var totalAmountValue =parseFloat(amountValue) + parseFloat((amountValue * gstValue / 100));
+
+    // Set the total amount textbox value.
+    total_amount.val(totalAmountValue);
+    hide_tot_amt.val(totalAmountValue);
+    console.log(total_amount)
+    });
+
+})
+</script>
+</html>

@@ -37,16 +37,7 @@ def show_product(request):
 def bill_page(request):  #print page
     ad_prod=addproduct.objects.all()# this all product name display in dropdown button
     invoice_all=invoice.objects.all()
-    bill_no=None
-    if addproduct.objects.exists():
-        if invoice.objects.exists():
-            inv_lat=invoice.objects.latest("id")
-            bill_no=inv_lat.bill_number+1
-        else:
-            bill_no=1
-    else:
-        return redirect('add_product')
-    
+    bill_no=None    
     msg=""
     fail_bill_msg=""
     dta={'invoice_all':invoice_all,'msg':msg,'ad_prod':ad_prod,'bill_no':bill_no,'fail_bill_msg':fail_bill_msg,}
@@ -63,37 +54,51 @@ def bill_page(request):  #print page
         tot=request.POST.get('hide_tot_amt')
         print("Total amount is",tot)
         bill_num=invoice.objects.filter(bill_number=billno)
-        inv=None
-        if bill_num.exists():
-            dta['fail_bill_msg']='Already this bill number is exists try again'
-        else:
-            inv=invoice(bill_number=billno,product_name=pname,quantity=qty,rate=rate,amount=amt,total_amount=tot,gst=gs,add_prod_id=ad_pr_for_ky)
-            inv.save()
+        # inv=None
+  
+        inv=invoice(bill_number=billno,product_name=pname,quantity=qty,rate=rate,amount=amt,total_amount=tot,gst=gs,add_prod_id=ad_pr_for_ky)
+        inv.save()
         msg="Save successfully"
         dta['msg']=msg
         print("Save successfully")
         pdf = canvas.Canvas('invoice.pdf')
-        pdf.drawString(100, 450, f"Bill details from SS Mall")
+        # pdf.drawString(100, 450, f"Bill details from SS Mall")
         pdf.line(100,400,100,400 )
-        pdf.drawString(100,400, "Bill Number" )
-        pdf.drawString(280,400,  billno)
+        pdf.drawString(70,400, "Bill Number" )
+        pdf.drawString(150,400,  billno)
 
-        pdf.drawString(100,350, "Product Name")
-        pdf.drawString(280,350, pname)
+        pdf.drawString(70,350, "Product")
+        pdf.drawString(140,350, "Quantity" )
+        pdf.drawString(210, 350, "Rate")
+        pdf.drawString(280, 350, "Amount" )
+        pdf.drawString(350, 350, "GST" )
+        pdf.drawString(420, 350, "Total Amount")
 
-        pdf.drawString(100,300, "Quantity" )
-        pdf.drawString(280,300, qty)
+        
+        inv_get_bill_no=invoice.objects.filter(bill_number=billno)
+        first_lp=0
+        x_axis_numb=70
+        y_axis_numb=350
+        for inv in inv_get_bill_no: 
+                first_lp =first_lp+1
+                if first_lp==1:
+                    pdf.drawString(x_axis_numb,y_axis_numb-50, inv.product_name)
 
+                x_axis_numb=x_axis_numb+70  
+                pdf.drawString(x_axis_numb,y_axis_numb-50, str(inv.quantity))
+                x_axis_numb=x_axis_numb+70 
+                pdf.drawString(x_axis_numb,y_axis_numb-50, str(inv.rate))
+                x_axis_numb=x_axis_numb+70 
+                pdf.drawString(x_axis_numb,y_axis_numb-50, str(inv.amount))
+                x_axis_numb=x_axis_numb+70 
+                pdf.drawString(x_axis_numb,y_axis_numb-50, str(inv.gst))
+                x_axis_numb=x_axis_numb+70 
+                pdf.drawString(x_axis_numb,y_axis_numb-50, str(inv.total_amount))
 
-        pdf.drawString(100, 250, "Rate")
-        pdf.drawString(280,250, rate)
+                y_axis_numb=y_axis_numb - 50
+                first_lp=0
+                x_axis_numb=70
 
-
-        pdf.drawString(100, 200, "Amount" )
-        pdf.drawString(280,200, amt)
-
-        pdf.drawString(100, 150, "Total Amount")
-        pdf.drawString(280,150, tot)
         pdf.save()
         with open('invoice.pdf', 'rb') as f:
             response = HttpResponse(f, content_type='application/pdf')

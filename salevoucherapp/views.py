@@ -61,11 +61,20 @@ def bill_page(request):  #print page
         msg="Save successfully"
         dta['msg']=msg
         print("Save successfully")
+  
+    return render(request,'bill.html',context=dta)
+
+
+
+def print_pdf(request):
+        bill_lat=invoice.objects.latest('id')
+        billno=bill_lat.bill_number
+        bill_num=invoice.objects.filter(bill_number=bill_lat.bill_number)
         pdf = canvas.Canvas('invoice.pdf')
         # pdf.drawString(100, 450, f"Bill details from SS Mall")
         pdf.line(100,400,100,400 )
         pdf.drawString(70,400, "Bill Number" )
-        pdf.drawString(150,400,  billno)
+        pdf.drawString(150,400,  str(billno))
 
         pdf.drawString(70,350, "Product")
         pdf.drawString(140,350, "Quantity" )
@@ -104,8 +113,6 @@ def bill_page(request):  #print page
             response = HttpResponse(f, content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
         return response
-    return render(request,'bill.html',context=dta)
-
 def edit_sale(request,pk):
     inv=invoice.objects.get(id=pk)
     if request.method=="POST":

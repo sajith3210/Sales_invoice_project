@@ -9,5 +9,6 @@ urlpatterns = [
     path('show_product/', views.show_product,name='show_product'),
     # path('get_product/', views.get_product,name='get_product'),
     path('get_product_data/', views.get_product_data,name='get_product_data'),
+    path('print_pdf/', views.print_pdf,name='print_pdf'),
     
 ]

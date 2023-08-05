@@ -94,7 +94,8 @@ body{
                         <input disabled required class="form-control"   type="number" name="tamount" id="tamount">
                         <!-- hidden total amount  -->
                         <input hidden  class="form-control"  type="number" name="hide_tot_amt" id="hide_tot_amt">
-                        <button class="w-100 float-xl-end btn btn-lg btn-success mt-4" type="submit"><span class="fa fa-save"></span> Print invoice</button>
+                        <button class="w-100 float-xl-end btn btn-lg btn-success mt-4" type="submit"> Add Billing</button>
+                        <a href="{% url 'print_pdf' %}" class="w-100 float-xl-end btn btn-lg btn-success mt-4" ><span class="fa fa-save"></span> Print invoice</a>
                         <br> <br> <br> <br>
                         {% if msg %}
                             <div id="success_message" class="alert alert-success">{{ msg }}</div>
